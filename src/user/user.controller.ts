@@ -1,4 +1,4 @@
-import { Controller, Get,  Delete,  Param, Patch, Post, Req, Body, ParseIntPipe  } from "@nestjs/common";
+import { Controller, Get,  Delete,  Param, Patch, Post, Req, Body, ParseIntPipe, NotFoundException  } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { UpdateUserDto } from "./dto/user-update.dto";
 import { Createuser } from "./dto/create-user.dto";
@@ -12,18 +12,14 @@ export class UserController{
         return this.userService.findAll()
     }
 
-    @Get('')
-    getUsers(){
-        return this.userService.get()
-        // {name:"I'm  from userController!"}
-    }
+   
     
 
-   @Post('/new')
+   @Post('')
    async createUser(@Body() user: Createuser): Promise<User> {
     return this.userService.create(user)
    }
-   @Get('/new/:id')
+   @Get('/:id')
    async getUsersById(@Param('id') id: string): Promise<User> {
        return this.userService.findById(id)
    }
@@ -44,8 +40,13 @@ export class UserController{
         return this.userService.show(id)
     }
     @Delete('/:id') 
-    deleteUser(@Param('id', ParseIntPipe) id: number){
-        return this.userService.delete(id)
-    }
+    async deleteUser(@Param('id') id: string): Promise<User> {
+        const deletedUser = await this.userService.deleteById(id);
 
-}
+        if (!deletedUser) {
+            throw new NotFoundException('User not found');
+        }
+
+        return deletedUser;
+
+}}
