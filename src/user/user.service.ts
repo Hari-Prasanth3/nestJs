@@ -45,14 +45,15 @@ async create(createUserDto: Createuser): Promise<{ user: User; token: string }> 
   }
 
     
-async login(create: Loginuser): Promise<User> {
+async login(create: Loginuser): Promise<{user: User; token: string}> {
     const user = await this.userModel.findOne({ email: create.email });
     if (!user) {
         throw new ConflictException('user not found');
     }
-    console.log(user);
+    const token = this.generateToken(user.id, user.email)
+    console.log(user,token);
     
-    return user
+    return { user, token}
 }
     
 

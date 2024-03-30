@@ -26,7 +26,7 @@ async createUser(@Body() user: Createuser): Promise<{ user: User; token: string 
 }
 
    @Post('/login')
-   async loginUser(@Body() user:Loginuser): Promise<User> {
+   async loginUser(@Body() user:Loginuser): Promise<{user:User; token: string}> {
     return this.userService.login(user)
    }
 //    for get user By id
